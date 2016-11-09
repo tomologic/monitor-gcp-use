@@ -9,4 +9,4 @@
 # gcloud panics unless the credentials file is writable, thus the copy
 cp /root/.config/gcloud/credentials_mounted /root/.config/gcloud/credentials
 gcloud config set account $SERVICE_ACCOUNT
-exec /usr/local/bin/list-gcp-resource-use.sh
+exec /usr/local/bin/list-gcp-resource-use.sh $*
