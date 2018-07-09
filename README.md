@@ -14,7 +14,7 @@ manual resource cleanup.
 ## Usage
 
     docker run --rm \
-    -v $HOME/.config/gcloud/credentials:/root/.config/gcloud/credentials_mounted:ro \
+    -v $PWD/credentials.json:/credentials.json:ro \
     -e SERVICE_ACCOUNT=<Service account ID>
     tomologic/monitor-gcp-use [list of exempted GCP project IDs]
 

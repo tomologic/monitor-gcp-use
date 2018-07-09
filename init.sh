@@ -6,7 +6,5 @@
   echo "credentials file"
   exit 1
 }
-# gcloud panics unless the credentials file is writable, thus the copy
-cp /root/.config/gcloud/credentials_mounted /root/.config/gcloud/credentials
-gcloud config set account $SERVICE_ACCOUNT
+gcloud auth activate-service-account "$SERVICE_ACCOUNT" --key-file /credentials.json
 exec /usr/local/bin/list-gcp-resource-use.sh $*
