@@ -2,7 +2,7 @@
 # Lists resources allocated in non-exempted GCP projects
 # Arguments is a set of projects to exempt from resource discovery
 
-EXEMPTED_PROJECTS="$*"
+EXEMPTED_PROJECTS=("$@")
 RESOURCE_FOUND=0
 COMPUTE_RESOURCE_TYPES="
   backend-services
@@ -31,10 +31,9 @@ main() {
     gcloud -q projects list > /dev/null || exit 1
     projects=$(gcloud -q projects list --format 'value(project_id)')
     for project in $projects; do
-        contains $project $EXEMPTED_PROJECTS
-        if [ $? -ne 0 ];then
+        if ! contains "$project" "${EXEMPTED_PROJECTS[@]}"; then
             echo "Checking project: $project"
-            find_resources $project
+            find_resources "$project"
         else
             echo "Skipping exempted project: $project"
         fi
@@ -45,26 +44,34 @@ main() {
 find_resources() {
     project=$1
     for type in $COMPUTE_RESOURCE_TYPES;do
-        find_resource_instances $project compute $type
+        find_resource_instances "$project" compute "$type"
     done
-    find_resource_instances $project deployment-manager deployments
+    find_resource_instances "$project" deployment-manager deployments
 }
 
 find_resource_instances() {
     project=$1
-    resource_type="${@:2}"
-    resources=$(gcloud -q --project $project $resource_type list --format="value(name)")
+    resource_type=("${@:2}")
+    resources=$(gcloud -q --project "$project" "${resource_type[@]}" list --format="value(name)")
     if [ $? -ne 0 ];then
       RESOURCE_FOUND=1
-    elif [ ! -z "$resources" ];then
+    elif [ -n "$resources" ];then
       RESOURCE_FOUND=1
-      echo "  * found '$resource_type':" $resources
+      echo "  * found '${resource_type[*]}':"
+      echo "$resources"
     fi
 }
 
 contains() {
-    local e
-    for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+    # Source: https://stackoverflow.com/questions/14366390/check-if-an-element-is-present-in-a-bash-array/14367368
+    # Put all function arguments after the first one into the array
+    local array=("${@:2}")
+    local seeking=$1
+    for element in "${array[@]}"; do
+        if [[ $element == "$seeking" ]]; then
+            return 0
+        fi
+    done
     return 1
 }
 

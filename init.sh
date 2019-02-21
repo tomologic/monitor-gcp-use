@@ -7,4 +7,4 @@
   exit 1
 }
 gcloud auth activate-service-account "$SERVICE_ACCOUNT" --key-file /credentials.json
-exec /usr/local/bin/list-gcp-resource-use.sh $*
+exec /usr/local/bin/list-gcp-resource-use.sh "$@"
