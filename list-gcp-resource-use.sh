@@ -5,7 +5,6 @@
 EXEMPTED_PROJECTS="$*"
 RESOURCE_FOUND=0
 COMPUTE_RESOURCE_TYPES="
-  addresses
   backend-services
   disks
   forwarding-rules
