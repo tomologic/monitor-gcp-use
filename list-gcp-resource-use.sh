@@ -53,9 +53,7 @@ find_resource_instances() {
     project=$1
     resource_type=("${@:2}")
     resources=$(gcloud -q --project "$project" "${resource_type[@]}" list --format="value(name)")
-    if [ $? -ne 0 ];then
-      RESOURCE_FOUND=1
-    elif [ -n "$resources" ];then
+    if [ -n "$resources" ];then
       RESOURCE_FOUND=1
       echo "  * found '${resource_type[*]}':"
       echo "$resources"
