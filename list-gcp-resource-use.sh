@@ -24,6 +24,7 @@ COMPUTE_RESOURCE_TYPES="
   target-vpn-gateways
   url-maps
   vpn-tunnels
+  addresses
 "
 
 main() {
@@ -46,7 +47,6 @@ find_resources() {
     for type in $COMPUTE_RESOURCE_TYPES;do
         find_resource_instances "$project" compute "$type"
     done
-    find_resource_instances "$project" deployment-manager deployments
 }
 
 find_resource_instances() {
