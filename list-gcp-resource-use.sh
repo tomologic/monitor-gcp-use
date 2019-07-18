@@ -24,7 +24,6 @@ COMPUTE_RESOURCE_TYPES="
   target-vpn-gateways
   url-maps
   vpn-tunnels
-  addresses
 "
 
 main() {
@@ -42,17 +41,33 @@ main() {
     exit $RESOURCE_FOUND
 }
 
-find_resources() {
+find_resources() {  # PROJECT
     project=$1
     for type in $COMPUTE_RESOURCE_TYPES;do
         find_resource_instances "$project" compute "$type"
     done
+    find_filtered_resource_instances "$project" "addressType=EXTERNAL" \
+        compute addresses
 }
 
-find_resource_instances() {
+find_resource_instances() {  # PROJECT RESOURCE_TYPE[]
     project=$1
     resource_type=("${@:2}")
-    resources=$(gcloud -q --project "$project" "${resource_type[@]}" list --format="value(name)")
+    resources=$(gcloud -q --project "$project" "${resource_type[@]}" list \
+        --format="value(name)")
+    if [ -n "$resources" ];then
+      RESOURCE_FOUND=1
+      echo "  * found '${resource_type[*]}':"
+      echo "$resources"
+    fi
+}
+
+find_filtered_resource_instances() {  # PROJECT FILTER RESOURCE_TYPE[]
+    project=$1
+    filter=$2
+    resource_type=("${@:3}")
+    resources=$(gcloud -q --project "$project" "${resource_type[@]}" list \
+        --filter="$filter" --format="value(name)")
     if [ -n "$resources" ];then
       RESOURCE_FOUND=1
       echo "  * found '${resource_type[*]}':"
