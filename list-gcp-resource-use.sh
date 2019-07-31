@@ -48,13 +48,14 @@ find_resources() {  # PROJECT
     done
     find_filtered_resource_instances "$project" "addressType=EXTERNAL" \
         compute addresses
+    find_resource_instances "$project" sql instances
 }
 
 find_resource_instances() {  # PROJECT RESOURCE_TYPE[]
     project=$1
     resource_type=("${@:2}")
     resources=$(gcloud -q --project "$project" "${resource_type[@]}" list \
-        --format="value(name)")
+        --format="value(name)" 2>/dev/null)
     if [ -n "$resources" ];then
       RESOURCE_FOUND=1
       echo "  * found '${resource_type[*]}':"
@@ -67,7 +68,7 @@ find_filtered_resource_instances() {  # PROJECT FILTER RESOURCE_TYPE[]
     filter=$2
     resource_type=("${@:3}")
     resources=$(gcloud -q --project "$project" "${resource_type[@]}" list \
-        --filter="$filter" --format="value(name)")
+        --filter="$filter" --format="value(name)" 2>/dev/null)
     if [ -n "$resources" ];then
       RESOURCE_FOUND=1
       echo "  * found '${resource_type[*]}':"
