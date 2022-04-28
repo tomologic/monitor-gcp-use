@@ -1,5 +1,5 @@
 # https://hub.docker.com/repository/docker/tomologic/kubeadmin/tags
-FROM tomologic/kubeadmin:371.0.0
+FROM tomologic/kubeadmin:383.0.1
 
 COPY ./list-gcp-resource-use.sh /usr/local/bin/
 COPY ./init.sh /
